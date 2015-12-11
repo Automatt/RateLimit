@@ -114,4 +114,43 @@ class RateLimitTests: XCTestCase {
 
 		waitForExpectationsWithTimeout(1, handler: nil)
     }
+    
+    func testDeferringExecution() {
+        let name = "testDeferringExecution"
+        
+        let expectation1 = expectationWithDescription("Execute 1")
+        let reported1 = RateLimit.execute(name: name, limit: 2) {
+            expectation1.fulfill()
+        }
+        XCTAssertTrue(reported1)
+        
+        waitForExpectationsWithTimeout(0, handler: nil)
+
+        let expectation2 = expectationWithDescription("Execute 2")
+        var secondExecutionCompleted = false
+        let reported2 = RateLimit.execute(name: name, limit: 1) {
+            secondExecutionCompleted = true
+            expectation2.fulfill()
+        }
+        XCTAssertFalse(reported2)
+        XCTAssertFalse(secondExecutionCompleted)
+        
+        waitForExpectationsWithTimeout(1, handler: nil)
+        
+        XCTAssertTrue(secondExecutionCompleted)
+        
+        let expectation3 = expectationWithDescription("Execute 3")
+        var thirdExecutionCompleted = false
+        let reported3 = RateLimit.execute(name: name, limit: 1) {
+            thirdExecutionCompleted = true
+            expectation3.fulfill()
+        }
+        XCTAssertFalse(reported3)
+        XCTAssertFalse(thirdExecutionCompleted)
+        
+        waitForExpectationsWithTimeout(1, handler: nil)
+        XCTAssertTrue(thirdExecutionCompleted)
+
+        
+    }
 }
