@@ -8,6 +8,8 @@ This will only execute the block passed for a given `name` if the last time it w
 
 This is really handy for refreshing stuff in `viewDidAppear:` but preventing it from happening a ton if it was just refreshed.
 
+This fork defers an execution of the block to the end of the limit.  This is handy if you're refreshing something periodically and don't want it to happen too often, but don't want to be displaying stale data, either.
+
 Rate Limit is **fully thread-safe.** Released under the [MIT license](LICENSE).
 
 
